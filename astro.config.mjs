@@ -8,21 +8,40 @@ export default defineConfig({
 			title: 'Hubble',
 			social: {
 				github: 'https://github.com/hubble-sm',
-				blueSky: 'https://bsky.app/profile/omgrod.bsky.social'
+				blueSky: 'https://bsky.app/profile/omgrod.bsky.social',
+				twitter: 'https://twitter.com/0mgRod',
+				email: 'mailto:omgrod1000@proton.me',
+				youtube: 'https://youtube.com/@OmgRodYT',
+				tiktok: 'https://tiktok.com/@therealomgrod',
+				reddit: 'https://reddit.com/u/omgrod'
 			},
 			sidebar: [
-				// {
-				// 	label: 'Guides',
-				// 	items: [
-				// 		// Each item here is one entry in the navigation menu.
-				// 		{ label: 'Example Guide', slug: 'guides/example' },
-				// 	],
-				// },
-				// {
-				// 	label: 'Reference',
-				// 	autogenerate: { directory: 'reference' },
-				// },
+				{
+					label: 'Getting Started',
+					slug: 'docs'
+				},
+				{
+					label: 'Bots',
+					items: [
+						{ label: 'Making Bots', slug: 'docs/bots' },
+					],
+				},
+				{
+					label: 'Contributing',
+					items: [
+						{ label: 'Contributing', slug: 'docs/contributing' },
+					],
+				},
+				{
+					label: 'Navigating the Website',
+					items: [
+						{ label: 'Navigating the Website', slug: 'docs/website' },
+					],
+				},
 			],
 		}),
 	],
+	devToolbar: {
+		enabled: false
+	}
 });
