@@ -1,36 +1,40 @@
 ---
-title: Welcome to Starlight
-description: Get started building your docs site with Starlight.
+title: Home
+description: Welcome to Hubble developer documentation!
 template: splash
 hero:
-  tagline: Congrats on setting up a new Starlight project!
+  tagline: Welcome to Hubble developer documentation!
   image:
-    file: ../../assets/houston.webp
+    file: ../../assets/hubble.png
   actions:
-    - text: Example Guide
-      link: /guides/example/
+    - text: Get Started!
+      link: /docs
       icon: right-arrow
-    - text: Read the Starlight docs
-      link: https://starlight.astro.build
+    - text: Open Hubble GitHub
+      link: https://github.com/hubble-sm/web
       icon: external
       variant: minimal
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components';
+import { Card, CardGrid, LinkButton } from '@astrojs/starlight/components';
 
-## Next steps
+## Guides
 
-<CardGrid stagger>
-	<Card title="Update content" icon="pencil">
-		Edit `src/content/docs/index.mdx` to see this page change.
-	</Card>
-	<Card title="Add new content" icon="add-document">
-		Add Markdown or MDX files to `src/content/docs` to create new pages.
-	</Card>
-	<Card title="Configure your site" icon="setting">
-		Edit your `sidebar` and other config in `astro.config.mjs`.
-	</Card>
-	<Card title="Read the docs" icon="open-book">
-		Learn more in [the Starlight Docs](https://starlight.astro.build/).
-	</Card>
+<CardGrid>
+  <Card title="Making a Bot" icon="seti:json">
+    <p>Learn how to make your own Hubble bots.</p>
+    <LinkButton href="/docs/bots">Learn more</LinkButton>
+  </Card>
+  <Card title="Contributing" icon="seti:github">
+    <p>Learn how to contribute to Hubble and its different repositories.</p>
+    <LinkButton href="/docs/contributing">Learn more</LinkButton>
+  </Card>
+  <Card title="Using the Website" icon="information">
+    <p>Learn how to navigate the Hubble website and all of its features.</p>
+    <LinkButton href="/docs/website">Learn more</LinkButton>
+  </Card>
+  <Card title="Documentation" icon="open-book">
+    <p>Read the full Hubble documentation here.</p>
+    <LinkButton href="/docs">Learn more</LinkButton>
+  </Card>
 </CardGrid>
