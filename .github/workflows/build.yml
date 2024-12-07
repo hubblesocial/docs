@@ -50,12 +50,20 @@ jobs:
             exit 1;
           fi
 
-      # Step 9: Commit dist folder to deploy branch
+      # Step 9: Check if the deploy branch exists, create it if it doesn't
+      - name: Create deploy branch if it doesn't exist
+        run: |
+          git fetch origin
+          if git show-ref --quiet refs/heads/deploy; then
+            echo "Deploy branch exists, checking out...";
+          else
+            echo "Deploy branch doesn't exist, creating deploy branch...";
+            git checkout --orphan deploy
+          fi
+
+      # Step 10: Commit dist folder to deploy branch
       - name: Deploy to deploy branch
         run: |
-          # Check out the deploy branch
-          git fetch origin deploy
-          git checkout deploy || git checkout --orphan deploy
           # Remove all existing files and copy the new build output to the root
           git rm -rf .
           cp -r dist/* .
@@ -65,6 +73,7 @@ jobs:
           # Push the changes to the deploy branch
           git push origin deploy --force
 
+      # Optional: Notify about successful deployment (can be extended as needed)
       - name: Notify about successful deployment
         run: |
           echo "Deployment successful to deploy branch."
