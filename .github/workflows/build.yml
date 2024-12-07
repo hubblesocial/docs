@@ -39,22 +39,26 @@ jobs:
       # Step 6: Create deploy branch if it doesn't exist and deploy the build
       - name: Deploy to deploy branch
         run: |
-          git fetch origin
-          if git show-ref --quiet refs/heads/deploy; then
-            git checkout deploy
-          else
-            git checkout --orphan deploy
-          fi
+            git fetch origin
+            if git show-ref --quiet refs/heads/deploy; then
+                git checkout deploy
+            else
+                git checkout --orphan deploy
+            fi
 
-          # Remove all files except dist/ folder
-          find . -maxdepth 1 -not -name "dist" -not -name ".git" -exec rm -rf {} \;
+            # Set up Git user info for commits
+            git config --global user.name "GitHub Actions"
+            git config --global user.email "actions@github.com"
 
-          # Copy dist folder contents to root (or wherever you need them)
-          cp -r dist/* .  # Make sure you're copying the actual files from dist
+            # Remove all files except dist/ folder
+            find . -maxdepth 1 -not -name "dist" -not -name ".git" -exec rm -rf {} \;
 
-          # Commit and push to the deploy branch
-          git add .  # Only the new contents of the dist directory
-          git commit -m "Deploy new build from dist"
+            # Copy dist folder contents to root (or wherever you need them)
+            cp -r dist/* .  # Make sure you're copying the actual files from dist
 
-          git remote set-url origin https://github-actions:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
-          git push origin deploy --force
+            # Commit and push to the deploy branch
+            git add .  # Only the new contents of the dist directory
+            git commit -m "Deploy new build from dist"
+
+            git remote set-url origin https://github-actions:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
+            git push origin deploy --force
