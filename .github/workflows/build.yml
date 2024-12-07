@@ -1,0 +1,49 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main  # This runs the workflow when code is pushed to the `main` branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Node.js and install dependencies
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'  # You can change the version if needed
+
+      - name: Install dependencies
+        run: npm install
+
+      # Step 3: Build the project
+      - name: Build the project
+        run: npm run build
+
+      # Step 4: Create or checkout the deploy branch
+      - name: Checkout deploy branch
+        run: |
+          git fetch origin
+          git checkout -b deploy || git checkout deploy
+
+      # Step 5: Copy the dist folder to the deploy branch
+      - name: Copy dist folder to deploy branch
+        run: |
+          rm -rf dist/ # Remove existing dist folder if it exists in the branch
+          cp -r ./dist ./ # Copy the dist folder from root to the repo root
+
+      # Step 6: Commit changes and push to the deploy branch
+      - name: Commit and push dist to deploy branch
+        run: |
+          git add dist/
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git commit -m "Deploy build"
+          git push origin deploy
