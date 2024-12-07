@@ -3,7 +3,7 @@ name: Build and Deploy
 on:
   push:
     branches:
-      - main  # This runs the workflow when code is pushed to the `main` branch
+      - main
 
 jobs:
   build:
@@ -14,59 +14,57 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Set up Node.js and install dependencies
+      # Step 2: Set up Node.js 21
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'  # Use a stable version of Node.js
+          node-version: '21'  # Ensure Node.js 21 is used for the build
 
+      # Step 3: Clear npm cache to avoid potential issues with stale dependencies
+      - name: Clear npm cache
+        run: npm cache clean --force
+
+      # Step 4: Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # Step 3: Verify Astro installation
-      - name: Verify Astro installation
-        run: npm ls astro
+      # Step 5: Verify installed dependencies
+      - name: Verify dependencies
+        run: npm ls
 
-      # Step 4: Build the project
-      - name: Build the project
+      # Step 6: Run the build
+      - name: Run build
         run: npm run build
 
-      # Step 5: List files after build (debugging)
-      - name: List files after build
-        run: ls -la
-
-      # Step 6: Checkout deploy branch
-      - name: Checkout deploy branch
+      # Step 7: Check if dist folder exists and contains expected files
+      - name: Verify dist folder exists
         run: |
-          git fetch origin
-          git checkout -b deploy || git checkout deploy
+          echo "Contents of dist directory:"
+          ls -la ./dist
 
-      # Step 7: List files after checkout (debugging)
-      - name: List files after checkout
-        run: ls -la
-
-      # Step 8: Clean up old dist folder in deploy branch
-      - name: Clean up old dist folder in deploy branch
+      # Step 8: Ensure dist directory is present and build output is correct
+      - name: Check dist folder existence
         run: |
-          if [ -d "./dist" ]; then
-            rm -rf ./dist/
+          if [ ! -d "./dist" ]; then
+            echo "Dist folder does not exist!";
+            exit 1;
           fi
 
-      # Step 9: Check and copy dist folder to deploy branch
-      - name: Check and copy dist folder to deploy branch
+      # Step 9: Commit dist folder to deploy branch
+      - name: Deploy to deploy branch
         run: |
-          if [ -d "/home/runner/work/docs/docs/dist" ]; then
-            cp -r /home/runner/work/docs/docs/dist ./  # Absolute path to dist
-          else
-            echo "No dist folder found, skipping copy."
-            exit 1
-          fi
+          # Check out the deploy branch
+          git fetch origin deploy
+          git checkout deploy || git checkout --orphan deploy
+          # Remove all existing files and copy the new build output to the root
+          git rm -rf .
+          cp -r dist/* .
+          # Stage and commit the changes
+          git add .
+          git commit -m "Deploy new build from dist"
+          # Push the changes to the deploy branch
+          git push origin deploy --force
 
-      # Step 10: Commit changes and push to the deploy branch
-      - name: Commit and push dist to deploy branch
+      - name: Notify about successful deployment
         run: |
-          git add dist/
-          git config --global user.name 'github-actions'
-          git config --global user.email 'github-actions@github.com'
-          git commit -m "Deploy build"
-          git push origin deploy
+          echo "Deployment successful to deploy branch."
