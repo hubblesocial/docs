@@ -70,10 +70,15 @@ jobs:
       # Step 10: Clean the deploy branch and add only the dist files
       - name: Deploy to deploy branch
         run: |
+          # Initialize a new empty commit to create a valid HEAD reference
+          git commit --allow-empty -m "Initialize empty commit" || echo "Empty commit already exists"
+
           # Remove all files except dist/ folder
-          git ls-tree --name-only HEAD | grep -v "^dist/" | xargs git rm -rf
+          find . -maxdepth 1 -not -name "dist" -not -name ".git" -exec rm -rf {} \;
+
           # Copy dist folder contents to root (or wherever you need them)
           cp -r dist/* .  # Make sure you're copying the actual files from dist
+
           # Stage and commit the changes
           git add .  # Only the new contents of the dist directory
           git commit -m "Deploy new build from dist"
