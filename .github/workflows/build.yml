@@ -41,18 +41,28 @@ jobs:
           git fetch origin
           git checkout -b deploy || git checkout deploy
 
-      # Step 7: Check if dist folder exists, then copy it
-      - name: Check and copy dist folder to deploy branch
+      # Step 7: List files after checkout (debugging)
+      - name: List files after checkout
+        run: ls -la
+
+      # Step 8: Clean up old dist folder in deploy branch
+      - name: Clean up old dist folder in deploy branch
         run: |
           if [ -d "./dist" ]; then
             rm -rf ./dist/
-            cp -r ./dist ./ 
+          fi
+
+      # Step 9: Check and copy dist folder to deploy branch
+      - name: Check and copy dist folder to deploy branch
+        run: |
+          if [ -d "/home/runner/work/docs/docs/dist" ]; then
+            cp -r /home/runner/work/docs/docs/dist ./  # Absolute path to dist
           else
             echo "No dist folder found, skipping copy."
             exit 1
           fi
 
-      # Step 8: Commit changes and push to the deploy branch
+      # Step 10: Commit changes and push to the deploy branch
       - name: Commit and push dist to deploy branch
         run: |
           git add dist/
