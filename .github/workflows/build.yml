@@ -18,7 +18,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '21'  # Ensure Node.js 21 is used for the build
+          node-version: '21'
 
       # Step 3: Clear npm cache to avoid potential issues with stale dependencies
       - name: Clear npm cache
@@ -82,5 +82,7 @@ jobs:
           # Stage and commit the changes
           git add .  # Only the new contents of the dist directory
           git commit -m "Deploy new build from dist"
-          # Push the changes to the deploy branch
+
+          # Use GH_TOKEN for authentication when pushing to deploy branch
+          git remote set-url origin https://github-actions:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
           git push origin deploy --force
