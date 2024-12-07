@@ -56,6 +56,7 @@ jobs:
           git fetch origin
           if git show-ref --quiet refs/heads/deploy; then
             echo "Deploy branch exists, checking out...";
+            git checkout deploy
           else
             echo "Deploy branch doesn't exist, creating deploy branch...";
             git checkout --orphan deploy
@@ -66,15 +67,15 @@ jobs:
           git config --global user.name "Your Name"
           git config --global user.email "you@example.com"
         
-
-      # Step 10: Commit dist folder to deploy branch
+      # Step 10: Clean the deploy branch and add only the dist files
       - name: Deploy to deploy branch
         run: |
-          # Remove all existing files and copy the new build output to the root
-          git rm -rf .
-          cp -r dist/* .
+          # Remove all files except dist/ folder
+          git ls-tree --name-only HEAD | grep -v "^dist/" | xargs git rm -rf
+          # Copy dist folder contents to root (or wherever you need them)
+          cp -r dist/* .  # Make sure you're copying the actual files from dist
           # Stage and commit the changes
-          git add .
+          git add .  # Only the new contents of the dist directory
           git commit -m "Deploy new build from dist"
           # Push the changes to the deploy branch
           git push origin deploy --force
