@@ -61,6 +61,12 @@ jobs:
             git checkout --orphan deploy
           fi
 
+      - name: Set Git user info
+        run: |
+          git config --global user.name "Your Name"
+          git config --global user.email "you@example.com"
+        
+
       # Step 10: Commit dist folder to deploy branch
       - name: Deploy to deploy branch
         run: |
@@ -72,8 +78,3 @@ jobs:
           git commit -m "Deploy new build from dist"
           # Push the changes to the deploy branch
           git push origin deploy --force
-
-      # Optional: Notify about successful deployment (can be extended as needed)
-      - name: Notify about successful deployment
-        run: |
-          echo "Deployment successful to deploy branch."
