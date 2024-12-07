@@ -20,58 +20,31 @@ jobs:
         with:
           node-version: '21'
 
-      # Step 3: Clear npm cache to avoid potential issues with stale dependencies
-      - name: Clear npm cache
-        run: npm cache clean --force
-
-      # Step 4: Install dependencies
+      # Step 3: Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # Step 5: Verify installed dependencies
-      - name: Verify dependencies
-        run: npm ls
-
-      # Step 6: Run the build
+      # Step 4: Run the build
       - name: Run build
         run: npm run build
 
-      # Step 7: Check if dist folder exists and contains expected files
+      # Step 5: Check if dist folder exists
       - name: Verify dist folder exists
         run: |
-          echo "Contents of dist directory:"
-          ls -la ./dist
-
-      # Step 8: Ensure dist directory is present and build output is correct
-      - name: Check dist folder existence
-        run: |
           if [ ! -d "./dist" ]; then
-            echo "Dist folder does not exist!";
+            echo "Dist folder does not exist! Exiting.";
             exit 1;
           fi
 
-      # Step 9: Check if the deploy branch exists, create it if it doesn't
-      - name: Create deploy branch if it doesn't exist
+      # Step 6: Create deploy branch if it doesn't exist and deploy the build
+      - name: Deploy to deploy branch
         run: |
           git fetch origin
           if git show-ref --quiet refs/heads/deploy; then
-            echo "Deploy branch exists, checking out...";
             git checkout deploy
           else
-            echo "Deploy branch doesn't exist, creating deploy branch...";
             git checkout --orphan deploy
           fi
-
-      - name: Set Git user info
-        run: |
-          git config --global user.name "Your Name"
-          git config --global user.email "you@example.com"
-        
-      # Step 10: Clean the deploy branch and add only the dist files
-      - name: Deploy to deploy branch
-        run: |
-          # Initialize a new empty commit to create a valid HEAD reference
-          git commit --allow-empty -m "Initialize empty commit" || echo "Empty commit already exists"
 
           # Remove all files except dist/ folder
           find . -maxdepth 1 -not -name "dist" -not -name ".git" -exec rm -rf {} \;
@@ -79,10 +52,9 @@ jobs:
           # Copy dist folder contents to root (or wherever you need them)
           cp -r dist/* .  # Make sure you're copying the actual files from dist
 
-          # Stage and commit the changes
+          # Commit and push to the deploy branch
           git add .  # Only the new contents of the dist directory
           git commit -m "Deploy new build from dist"
 
-          # Use GH_TOKEN for authentication when pushing to deploy branch
           git remote set-url origin https://github-actions:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
           git push origin deploy --force
