@@ -18,28 +18,41 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '23'  # You can change the version if needed
+          node-version: '18'  # Use a stable version of Node.js
 
       - name: Install dependencies
         run: npm install
 
-      # Step 3: Build the project
+      # Step 3: Verify Astro installation
+      - name: Verify Astro installation
+        run: npm ls astro
+
+      # Step 4: Build the project
       - name: Build the project
         run: npm run build
 
-      # Step 4: Create or checkout the deploy branch
+      # Step 5: List files after build (debugging)
+      - name: List files after build
+        run: ls -la
+
+      # Step 6: Checkout deploy branch
       - name: Checkout deploy branch
         run: |
           git fetch origin
           git checkout -b deploy || git checkout deploy
 
-      # Step 5: Copy the dist folder to the deploy branch
-      - name: Copy dist folder to deploy branch
+      # Step 7: Check if dist folder exists, then copy it
+      - name: Check and copy dist folder to deploy branch
         run: |
-          rm -rf dist/ # Remove existing dist folder if it exists in the branch
-          cp -r ./dist ./ # Copy the dist folder from root to the repo root
+          if [ -d "./dist" ]; then
+            rm -rf ./dist/
+            cp -r ./dist ./ 
+          else
+            echo "No dist folder found, skipping copy."
+            exit 1
+          fi
 
-      # Step 6: Commit changes and push to the deploy branch
+      # Step 8: Commit changes and push to the deploy branch
       - name: Commit and push dist to deploy branch
         run: |
           git add dist/
