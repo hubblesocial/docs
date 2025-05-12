@@ -3,9 +3,6 @@ import starlight from '@astrojs/starlight';
 
 // https://astro.build/config
 export default defineConfig({
- build: {
-  assetsPrefix: './assets/'
- },
 	site: 'https://hubbledocs.omgrod.me',
 	integrations: [
 		starlight({
