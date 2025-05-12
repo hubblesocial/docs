@@ -6,8 +6,7 @@ export default defineConfig({
  build: {
   assetsPrefix: './assets/'
  },
-	base: '',
-	site: 'https://docs.developers.hubble.omgrod.me',
+	site: 'https://hubbledocs.omgrod.me',
 	integrations: [
 		starlight({
 			title: 'Hubble Docs',
