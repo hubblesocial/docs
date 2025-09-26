@@ -3,11 +3,7 @@ import starlight from '@astrojs/starlight';
 
 // https://astro.build/config
 export default defineConfig({
- build: {
-  assetsPrefix: './assets/'
- },
-	base: '/developers/docs',
-	site: 'https://hubble.omgrod.me',
+	site: 'https://hubbledocs.omgrod.me',
 	integrations: [
 		starlight({
 			title: 'Hubble Docs',
